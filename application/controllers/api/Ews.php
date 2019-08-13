@@ -33,5 +33,34 @@ class Ews extends CI_Controller{
     echo json_encode($response);
     
   }
+
+  function detail($ktp = null) {
+    $codeResponse = 200;
+    $responseData = array();
+    $responseCode = "00";
+    $responseDesc = "";
+    $responseError = false;
+
+    if ($ktp == null) {
+      $responseCode = '01';
+      $responseError = true;
+      $responseDesc = 'Parameter not Found';
+
+      $response = resultJson($responseError, $responseCode, $responseDesc, @$responseData);
+      echo json_encode($response);
+      die;
+    }
+
+    $dateStart = date("Y-m-d");
+    $dateEnd = date("Y-m-d", strtotime("-2 week"));
+
+    $responseData  = $this->table_nasabah->get_detail($ktp, $dateStart, $dateEnd);
+
+    $response = resultJson($responseError, $responseCode, $responseDesc, @$responseData);
+
+    echo json_encode($response);
+    
+    
+  }
  }
 ?>

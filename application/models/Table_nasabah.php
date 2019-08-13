@@ -19,6 +19,15 @@ class Table_nasabah extends CI_Model {
 		$query = $this->db->get($this->table);
 		
     return $query->result();
+  } 
+
+  public function get_detail ($ktp, $start, $end) {
+   
+    $multiWhere = array('tanggal <=' => $start, 'tanggal >=' => $end, 'status !=' =>"D", 'ktp'=>$ktp);
+    $this->db->select('*')->where($multiWhere)->order_by('tanggal',' desc');
+		$query = $this->db->get($this->table);
+		
+    return $query->result(); 
   }
    
 }
