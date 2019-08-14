@@ -3,7 +3,7 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 
-class Table_nasabah extends CI_Model {
+class Model_ews extends CI_Model {
   
   public $table = 'ews-nasabah';
 
@@ -12,7 +12,7 @@ class Table_nasabah extends CI_Model {
     $this->load->database();
   }
 
-  public function get_data($start, $end) {
+  public function get_data_nasabah($start, $end) {
     $multiWhere = array('tanggal <=' => $start, 'tanggal >=' => $end, 'status !=' =>"D");
     $this->db->select('ktp, customerName, SUM(up) as upTotal')->where($multiWhere);
     $this->db->group_by('ktp, customerName');
@@ -21,7 +21,7 @@ class Table_nasabah extends CI_Model {
     return $query->result();
   } 
 
-  public function get_detail ($ktp, $start, $end) {
+  public function get_detail_nasabah($ktp, $start, $end) {
    
     $multiWhere = array('tanggal <=' => $start, 'tanggal >=' => $end, 'status !=' =>"D", 'ktp'=>$ktp);
     $this->db->select('*')->where($multiWhere)->order_by('tanggal',' desc');
