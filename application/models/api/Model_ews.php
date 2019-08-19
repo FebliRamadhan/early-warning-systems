@@ -12,6 +12,8 @@ class Model_ews extends CI_Model {
   public $table_limit_bank = 'ews-batas-bank';
   public $table_realisasi_bank = 'ews-realisasi-bank';
   public $table_transaksi = 'ews-transaksi';
+  public $table_lunas = 'ews-lunas';
+  public $table_bjdpl = "ews-bjdpl";
 
   public function __construct(){
     parent::__construct();
@@ -178,6 +180,56 @@ class Model_ews extends CI_Model {
     
     $this->db->select('*')->where('id', $id)->order_by('tanggal', 'desc');
     $query = $this->db->get($this->table_transaksi);
+
+    return $query->result();
+
+  }
+
+  public function get_data_lunas($idOutlet, $start, $end) {
+
+    $multiWhere = array(
+      'tanggal <=' => $start,
+      'tanggal >=' => $end,
+      'status !=' =>"D",
+      'idOutlet'=>$idOutlet
+    );
+
+    $this->db->select('*')->where($multiWhere)->order_by('tanggal', 'desc');
+    $query = $this->db->get($this->table_lunas);
+
+    return $query->result();
+
+  }
+
+  public function get_detail_lunas($id) {
+    
+    $this->db->select('*')->where('id', $id)->order_by('tanggal', 'desc');
+    $query = $this->db->get($this->table_lunas);
+
+    return $query->result();
+
+  }
+
+  public function get_data_bjdpl($idOutlet, $start, $end) {
+
+    $multiWhere = array(
+      'tanggal <=' => $start,
+      'tanggal >=' => $end,
+      'status !=' =>"D",
+      'idOutlet'=>$idOutlet
+    );
+
+    $this->db->select('*')->where($multiWhere)->order_by('tanggal', 'desc');
+    $query = $this->db->get($this->table_bjdpl);
+
+    return $query->result();
+
+  }
+
+  public function get_detail_bjdpl($id) {
+    
+    $this->db->select('*')->where('id', $id)->order_by('tanggal', 'desc');
+    $query = $this->db->get($this->table_bjdpl);
 
     return $query->result();
 
