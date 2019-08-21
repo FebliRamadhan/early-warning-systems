@@ -11,8 +11,12 @@ if ( ! function_exists('resultJson'))
 {
     function resultJson($responseError = true, $responseCode = "", $responseDesc = "", $data){
         // return array("responseError" => $responseError, "responseCode" => $responseCode ,"responseDesc" => $responseDesc, "data" => $data);
-        $count = count($data);
-        return array("error" => $responseError,"code" => $responseCode,"message" => $responseDesc, "dataCount"=> $count, "data" => $data);
+        if ($data) {
+            $count = count($data);
+        }else {
+            $count = null;
+        }
+        return array("error" => $responseError,"code" => $responseCode,"message" => $responseDesc, "dataCount"=> @$count, "data" => @$data);
     }
 }
 if ( ! function_exists('resultLogin'))
