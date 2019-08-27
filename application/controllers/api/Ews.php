@@ -177,15 +177,15 @@ class Ews extends API_Controller {
             $existDate = null;
             $newMapping = true;
             
-            // echo json_encode($responseData); die;
+
             foreach($responseData as $key => $row) {
-                // echo count($responseData);
+                
                 if (count($responseData) != $key + 1) {
                     $date1 = strtotime($row->tanggal);
                     $date2 = strtotime($responseData[$key + 1]->tanggal);
                     $dateResult = $date2 - $date1;
                     $dateResult = round($dateResult / (60 * 60 * 24));
-                    // echo $dateResult;
+                    
                     if ($dateResult == 1) {
                         $temporaryMapping[] = $row;
                         $newMapping = false;
@@ -228,7 +228,6 @@ class Ews extends API_Controller {
                     } else {
                         $temporaryMapping = array();
                         $mergeNumber = 0;
-                        // $newMapping = false;
                     }
                 }
                 
@@ -239,7 +238,7 @@ class Ews extends API_Controller {
                 }
                 
             }
-            // die;
+            
             $responseError = false;
             $responseCode = "00";
             $responseDesc = "approve";
