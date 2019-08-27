@@ -156,7 +156,7 @@ class Model_ews extends CI_Model {
 
     $this->db->select('*');
     $this->db->where($multiWhere);
-
+    $this->db->order_by('tanggal', 'asc');
     $query = $this->db->get($this->table_realisasi_bank);
     
     return $query->result();
