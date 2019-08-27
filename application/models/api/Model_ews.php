@@ -112,27 +112,6 @@ class Model_ews extends CI_Model {
     
   }
 
-  public function get_detail_kas($id, $idOutlet, $start, $end) {
-    
-    $multiWhere = array(
-      't1.tanggal <=' => $start,
-      't1.tanggal >=' => $end,
-      't1.status !=' =>"D",
-      't1.idOutlet'=>$idOutlet,
-      't1.id'=>$id
-    );
-    
-    
-    $this->db->select('t1.id, t1.idOutlet, t1.tanggal, t1.realisasi_kas, t2.tanggal, t2.limit_kas, t1.createdBy, t1.createdDate')->from($this->table_realisasi. ' t1');
-    $this->db->join($this->table_limit. ' t2', 't1.idOutlet = t2.idOutlet AND t1.tanggal = t2.tanggal');
-    $this->db->where($multiWhere);
-    $this->db->where('t1.realisasi_kas > t2.limit_kas');
-    $query = $this->db->get();
-    
-    return $query->result();
-    
-  }
-  
   public function get_last_limit_kas ($idOutlet) {
     
     $this->db->order_by('tanggal', 'desc');
@@ -163,26 +142,6 @@ class Model_ews extends CI_Model {
     
   }
   
-  public function get_detail_bank($id, $idOutlet, $start, $end) {
-    
-    $multiWhere = array(
-      't1.tanggal <=' => $start,
-      't1.tanggal >=' => $end,
-      't1.status !=' =>"D",
-      't1.idOutlet'=>$idOutlet,
-      't1.id'=>$id
-    );
-    
-    $this->db->select('t1.id, t1.idOutlet, t1.tanggal, t1.realisasi_bank, t2.tanggal, t2.limit_bank, t1.createdBy, t1.createdDate')->from($this->table_realisasi_bank. ' t1');
-    $this->db->join($this->table_limit_bank. ' t2', 't1.idOutlet = t2.idOutlet AND t1.tanggal = t2.tanggal');
-    $this->db->where($multiWhere);
-    $this->db->where('t1.realisasi_bank > t2.limit_bank');
-    $query = $this->db->get();
-    
-    return $query->result();
-    
-  }
-
   public function get_last_limit_bank ($idOutlet) {
     
     $this->db->order_by('tanggal', 'desc');

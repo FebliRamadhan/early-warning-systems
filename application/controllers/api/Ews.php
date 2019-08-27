@@ -251,8 +251,12 @@ class Ews extends API_Controller {
             
             $codeRespone = 400;
         }
-        $responseData = $dataMapping[0];
-        $response = resultJson($responseError, $responseCode, $responseDesc, @$responseData);
+        $dataResponse = array();
+        foreach ($dataMapping as $key => $value) {
+            $dataResponse[] = end($value);
+        }
+        
+        $response = resultJson($responseError, $responseCode, $responseDesc, @$dataResponse);
         $this->response($response, $codeRespone);
     }
     
@@ -262,19 +266,21 @@ class Ews extends API_Controller {
         $codeRespone = 200;
         
         $this->form_validation->set_data($post);
-        $this->form_validation->set_rules('id','id','required');
         $this->form_validation->set_rules('idOutlet','idOutlet','required');
+        $this->form_validation->set_rules('tanggal','tanggal','required');
         
         $responseData = null;
         
         if ($this->form_validation->run() == TRUE) {
-            $dateStart = date("Y-m-d");
-            $dateEnd = date("Y-m-d", strtotime("-2 week"));
+            $dateStart = date("Y-m-d", strtotime($post['tanggal']));
+            $dateEnd = date("Y-m-d", strtotime(" -3 day", strtotime($dateStart)));
             
             if ($type == 'kas') {
-                $responseData  = $this->Model_ews->get_detail_kas($post['id'], $post['idOutlet'], $dateStart, $dateEnd);
+                $getLimit = $this->Model_ews->get_last_limit_kas($post['idOutlet']);
+                $responseData  = $this->Model_ews->get_data_kas($post['idOutlet'], $dateStart, $dateEnd, $getLimit->limit_kas);
             }else if ($type == 'bank') {
-                $responseData  = $this->Model_ews->get_detail_bank($post['id'], $post['idOutlet'], $dateStart, $dateEnd);
+                $getLimit = $this->Model_ews->get_last_limit_bank($post['idOutlet']);
+                $responseData  = $this->Model_ews->get_data_bank($post['idOutlet'], $dateStart, $dateEnd, $getLimit->limit_bank);
             }
             
             $responseError = false;
