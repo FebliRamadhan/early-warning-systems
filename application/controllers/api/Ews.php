@@ -512,6 +512,105 @@ class Ews extends API_Controller {
         $response = resultJson($responseError, $responseCode, $responseDesc, @$responseData);
         $this->response($response, $codeRespone);
     }
+
+    function taksiran_get()
+    {
+        $get = $this->get();
+        $codeRespone = 200;
+
+        $this->form_validation->set_data($get);
+        $this->form_validation->set_rules('sample', 'sample','required');
+        $this->form_validation->set_rules('branch', 'branch', 'required');
+        $this->form_validation->set_rules('kat_kantong', 'kategori kantong', 'required');
+        $this->form_validation->set_rules('kat_gudang', 'kategori gudang', 'required');
+
+
+        if ($this->form_validation->run() == TRUE) {
+            
+            $responseData = array();
+            
+            $persen = $get['kat_kantong'] + $get['kat_gudang'];
+            $jmlKantong = round($get['sample'] * $get['kat_kantong'] / 100);
+            $jmlGudang = round($get['sample'] * $get['kat_gudang'] / 100);
+
+            if ($persen != 100) {
+
+                $responseError = true;
+                $responseCode = "01";
+                $responseDesc = 'Persen melebihi atau kurang dari 100 %';
+                
+                $codeRespone = 400;
+                
+            }
+            else {
+
+                $nikKantong = $this->Model_ews->get_nik_kantong($get['branch']);
+                $nikGudang = $this->Model_ews->get_nik_gudang($get['branch']);
+
+                $kantongData = array();
+                $gudangData = array();
+
+                // ambil data data persatu NIK
+
+                foreach ($nikKantong as $key => $row) {
+                    $dataKantong  = $this->Model_ews->get_random_kantong($get['branch'], $row->nikKtp);
+
+                    if ($dataKantong != null) {
+                        $kantongData[] = $dataKantong;
+                    }
+                }
+
+                foreach ($nikGudang as $key => $rows) {
+                    $dataGudang = $this->Model_ews->get_random_gudang($get['branch'], $rows->nikKtp);
+
+                    if ($dataGudang != null) {
+                        $gudangData[] = $dataGudang;
+                    }
+                }
+                
+                $mappingResult = array();
+                $numberKantong = 0;
+                $numberGudang = 0;
+
+                foreach ($kantongData as $key => $row) {
+                    if ($numberKantong < $jmlKantong) {
+                        $responseData[] = $row;
+                    }
+                    $numberKantong++;
+                }
+
+                foreach ($gudangData as $key => $row) {
+                    if ($numberGudang < $jmlGudang) {
+                        $responseData[] = $row;
+                    }
+                    $numberGudang++;
+                }
+
+                // Update data yang tampil dengan memberi flag
+
+                // foreach ($responseData as $key => $row) {
+                //     $this->Model_ews->update_data_sample($row->id);
+                // }
+                
+                $responseError = false;
+                $responseCode = "00";
+                $responseDesc = "approve";
+            }
+
+        } else {
+
+            $message = $this->form_validation->error_array();
+            $responseError = true;
+            $responseCode = "01";
+            $responseDesc = viewErrorValidation($message);
+            
+            $codeRespone = 400;
+        }
+
+        $response = resultJson($responseError, $responseCode, $responseDesc, @$responseData);
+        
+        $this->response($response, $codeRespone);
+    }
     
 }
 
