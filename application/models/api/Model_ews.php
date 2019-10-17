@@ -15,6 +15,7 @@ class Model_ews extends CI_Model {
   public $table_lunas = 'ews-lunas';
   public $table_bjdpl = 'ews-bjdpl';
   public $table_master_outlet = 'ews-master-outlet';
+  public $table_sample = 'random_sample';
   
   public function __construct(){
     parent::__construct();
@@ -241,6 +242,88 @@ class Model_ews extends CI_Model {
     
     return $query->result();
     
+  }
+
+  function get_nik_kantong($idOutlet)
+  {
+
+    $multiWhere = array(
+      'kodeOutlet =' => $idOutlet,
+      'rubrik =' => 'KT',
+      'golongan !='=> '',
+      'status !=' => 'D',
+      'nikKtp !=' => ''
+    );
+
+    $this->db->select('nikKtp, count(nikKtp) as jumlah, kodeOutlet');
+    $this->db->where($multiWhere);
+    $this->db->group_by('nikKtp');
+    $this->db->order_by('jumlah', 'DESC');
+    $this->db->having('count(nikKtp) >', 1);
+    $query = $this->db->get($this->table_sample);
+    
+    return $query->result();
+  }
+
+  function get_nik_gudang($idOutlet)
+  {
+    $multiWhere = array(
+      'kodeOutlet =' => $idOutlet,
+      'rubrik !=' => 'KT',
+      'golongan !='=> '',
+      'status !=' => 'D',
+      'nikKtp !=' => ''
+    );
+
+    $this->db->select('nikKtp, count(nikKtp) as jumlah, kodeOutlet');
+    $this->db->where($multiWhere);
+    $this->db->group_by('nikKtp');
+    $this->db->order_by('jumlah', 'DESC');
+    $this->db->having('count(nikKtp) >', 1);
+    $query = $this->db->get($this->table_sample);
+    
+    return $query->result();
+  }
+
+  public function get_random_kantong($idOutlet, $nikKtp) {
+
+    $multiWhere = array(
+      'kodeOutlet =' => $idOutlet,
+      'rubrik =' => 'KT',
+      'golongan !='=> '',
+      'status !=' => 'D',
+      'nikKtp' => $nikKtp
+    );
+
+    $this->db->select('*')->where($multiWhere)->order_by('up', 'DESC');
+    $query = $this->db->get($this->table_sample);
+
+    return $query->row();
+
+  }
+
+  public function get_random_gudang($idOutlet, $nikKtp) {
+
+    $multiWhere = array(
+      'kodeOutlet =' => $idOutlet,
+      'rubrik !=' => 'KT',
+      'golongan !='=> '',
+      'status !=' => 'D',
+      'nikKtp' => $nikKtp
+    );
+
+    $this->db->select('*')->where($multiWhere)->order_by('up', 'DESC');
+    $query = $this->db->get($this->table_sample);
+
+    return $query->row();
+
+  }
+
+  function update_data_sample($id)
+  { 
+    $this->db->set('status', 'D');
+    $this->db->where('id', $id);
+    $this->db->update($this->table_sample);
   }
 
 }
